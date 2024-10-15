@@ -47,9 +47,9 @@ parsing to semantics.
 
 | first name last name | color                                |
 |----------------------+--------------------------------------|
-|                      | yellow \color{yellow}\rule{5mm}{3mm} |
-|                      | green \color{green}\rule{5mm}{3mm}   |
-|                      | purple \color{violet}\rule{5mm}{3mm} |
+| Eric Chin            | yellow \color{yellow}\rule{5mm}{3mm} |
+| Ying-Chen Lin        | green \color{green}\rule{5mm}{3mm}   |
+| James Wiliams        | purple \color{violet}\rule{5mm}{3mm} |
 
 
 ** Three Member Solution Patterns
