@@ -145,11 +145,18 @@ definitions (that is, write the proof and describe it).
        + This is because the rule can be rewritten as $A \rightarrow BCD$ where $B,C,D \in N$
        + $BCD \in w$ given that $w \in \{N,T\}^*$
    + rule 2 :: $\txtgrmr{FOO \ DUCK}{EGO \ NEED \ DUCK}$
+     + ANSWER :: This is a Context Sensitive Language production!
+       + This is because this production is of the form $u_1 A u_2 \rightarrow u_1 w u_2$
+       + $\epsilon = u_1, FOO = A, DUCK = u_2, EGO\ NEED = w$
+       + The following holds true: $u_1, u_2, w \in (N \cup T)^*, A \in N, w \neq \epsilon$
+
+
    + rule 3 :: $\txtgrmr{FOO}{EGO \ \w{dog} \ DUCK}$
      + ANSWER :: This is a production of a Context Free Language.
        + This is because the rule can be rewritten as $A \rightarrow BCD$ where $B,D \in N$ and $C \in T$
        + $BCD \in w$ given that $w \in \{N,T\}^*$
    + rule 4 :: $\txtgrmr{FOO \ \w{ground hog}}{EGO \ \w{dog} \ DUCK \ \w{squirrel}}$
+     + ANSWER ::
    + rule 5 :: $\txtgrmr{FOO}{\w{black} \ \w{dog} \ DUCK}$
      + ANSWER :: This is a Regular Language!
        + This is because the rule can be redescribed as $A \rightarrow XY$ where $X \in T^*$ and $Y \in N$
