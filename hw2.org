@@ -141,10 +141,18 @@ For each of the following production rules, state from which class of
 language they come and /show why/ by derivation from the language
 definitions (that is, write the proof and describe it).
    + rule 1 :: $\txtgrmr{FOO}{EGO \ NEED \ DUCK}$
-   + rule 2 :: $\txtgrmr{FOO \ DUCK}{EGO \ NEED \ DUCK}$ 
-   + rule 3 :: $\txtgrmr{FOO}{EGO \ \w{dog} \ DUCK}$  
-   + rule 4 :: $\txtgrmr{FOO \ \w{ground hog}}{EGO \ \w{dog} \ DUCK \ \w{squirrel}}$  
-   + rule 5 :: $\txtgrmr{FOO}{\w{black} \ \w{dog} \ DUCK}$  
+     + ANSWER :: This is a production of a Context Free Language.
+       + This is because the rule can be rewritten as $A \rightarrow BCD$ where $B,C,D \in N$
+       + $BCD \in w$ given that $w \in \{N,T\}^*$
+   + rule 2 :: $\txtgrmr{FOO \ DUCK}{EGO \ NEED \ DUCK}$
+   + rule 3 :: $\txtgrmr{FOO}{EGO \ \w{dog} \ DUCK}$
+     + ANSWER :: This is a production of a Context Free Language.
+       + This is because the rule can be rewritten as $A \rightarrow BCD$ where $B,D \in N$ and $C \in T$
+       + $BCD \in w$ given that $w \in \{N,T\}^*$
+   + rule 4 :: $\txtgrmr{FOO \ \w{ground hog}}{EGO \ \w{dog} \ DUCK \ \w{squirrel}}$
+   + rule 5 :: $\txtgrmr{FOO}{\w{black} \ \w{dog} \ DUCK}$
+     + ANSWER :: This is a Regular Language!
+       + This is because the rule can be redescribed as $A \rightarrow XY$ where $X \in T^*$ and $Y \in N$
 #
 Each of the rules is abstracted from a different grammar!
 
