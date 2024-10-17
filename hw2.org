@@ -183,8 +183,12 @@ Is the grammar left-, right-, neither-, or both-recursive?  Why?
    length of output using the grammar of question [[which-recursn]] and show
    them and their derivation as an =org= table:
 
-| sentence        | rule sequence and comments                                |
-|-----------------+-----------------------------------------------------------|
+| sentence       | rule sequence and comments                                                                                                |
+|----------------+---------------------------------------------------------------------------------------------------------------------------|
+| $foobar$       | $S \rightarrow C \rightarrow AB \rightarrow AA \rightarrow AT \rightarrow TT \rightarrow "foo"T \rightarrow "foo"\ "bar"$ |
+| $foofoofoofoo$ | $S \rightarrow C \rightarrow AB \rightarrow TB \rightarrow "foo"B \rightarrow "foo"AD \rightarrow "foo"TD \rightarrow$    |
+|                | $"foo""foo"D \rightarrow "foo""foo"AA \rightarrow "foo""foo"TA \rightarrow$                                               |
+|                | $"foo""foo""foo"A \rightarrow "foo""foo""foo"T \rightarrow "foo""foo""foo""foo"$                                          |
 
 
 # clarified they are not to write more complex productn rules, 
