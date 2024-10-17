@@ -1,0 +1,441 @@
+% Created 2024-10-17 Thu 13:29
+% Intended LaTeX compiler: pdflatex
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{wrapfig}
+\usepackage{rotating}
+\usepackage[normalem]{ulem}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{capt-of}
+\usepackage{hyperref}
+\usepackage{langsci-avm}
+\newcommand{\grmr}[2]{\ensuremath{\mathrm{#1} & \,\longrightarrow\, \mathrm{#2}}}
+\newcommand{\txtgrmr}[2]{\ensuremath{\mathrm{#1} \,\longrightarrow\, \mathrm{#2}}}
+\newcommand{\grmrhs}[1]{\ensuremath{& \,\longrightarrow\, \mathrm{#1} }}
+\newcommand{\wa}[1]{\type{\textnormal{\w{#1}}}}
+\author{Toni Kazic}
+\date{Fall, 2024}
+\title{Homework 2: Formal Languages, Parsing, and Semantics}
+\hypersetup{
+ pdfauthor={Toni Kazic},
+ pdftitle={Homework 2: Formal Languages, Parsing, and Semantics},
+ pdfkeywords={},
+ pdfsubject={},
+ pdfcreator={Emacs 29.3 (Org mode 9.8)}, 
+ pdflang={English}}
+\begin{document}
+
+\maketitle
+\section{Introduction}
+\label{sec:org1afeaa0}
+
+In this homework, the syntactic and semantic rubber hits the road.  This
+homework introduces the deeper structures of language, especially when
+phrased formally; looks at syntax and parsing; and extends the notion of
+parsing to semantics.
+\section{Who's Who and Solution Patterns}
+\label{sec:org7bc4000}
+\label{whoswho}
+\subsection{Lead Person:  yellow}
+\label{sec:orgeea034d}
+
+
+\subsection{Group Members}
+\label{sec:org37e8cf2}
+
+\begin{center}
+\begin{tabular}{ll}
+first name last name & color\\
+\hline
+Eric Chin & yellow \color{yellow}\rule{5mm}{3mm}\\
+Ying-Chen Lin & green \color{green}\rule{5mm}{3mm}\\
+James Wiliams & purple \color{violet}\rule{5mm}{3mm}\\
+\end{tabular}
+\end{center}
+\subsection{Three Member Solution Patterns}
+\label{sec:org2f474c7}
+
+\(i\) is the question number.
+
+\begin{center}
+\(\begin{array}{ccc}
+ \text{color} & \text{draft solution} & \text{revise solution} \\
+\hline green \color{green}\rule{5mm}{3mm} & i \mod 3 = 1 & i \mod 3 = 0 \\
+ yellow \color{yellow}\rule{5mm}{3mm} & i \mod 3 = 2 & i \mod 3 = 1 \\
+ purple \color{violet}\rule{5mm}{3mm} & i \mod 3 = 0 & i \mod 3 = 2 \\
+\end{array}
+\)
+\end{center}
+\subsection{Two Member Solution Patterns}
+\label{sec:org8953c0c}
+
+\begin{center}
+\begin{tabular}{lll}
+color & draft solution & revise solution\\
+\hline
+green \color{green}\rule{5mm}{3mm} & odds & evens\\
+yellow \color{yellow}\rule{5mm}{3mm} & evens & odds\\
+\end{tabular}
+\end{center}
+\section{General Instructions}
+\label{sec:org8b59493}
+
+
+\begin{itemize}
+\item \emph{Fill out the group members table and follow the solution patterns} in
+Section \ref{whoswho}.
+
+\item \emph{If the question is unclear, tell me your interpretation of it as part
+of your answer.}  Feel free to ask about the questions in class or on
+the Slack channel (use \texttt{@channel} as others will probably be puzzled
+too).
+
+\item \emph{For questions using corpora, use the corpus of the lead person.}
+
+\item \emph{Put your draft answers right after each question using a \textbf{complete,
+functional} \texttt{org} mode code or example block.} Make sure your code
+block is complete and functional by testing it in your copy of this
+homework file.
+
+\item \emph{Each group member reviews the others' draft solutions and you revise them together}.
+
+\item \emph{Discuss each other's draft and reviews, finalizing the answers.}
+
+\item \emph{Show all your work: code, results, and analysis.}  Does your code
+work in this file and produce \textbf{exactly} the results you show?
+
+\item \emph{Post the completed file to Canvas no later than noon on the Tuesday
+indicated} in the \href{../syllabus.org}{schedule in the syllabus}, naming your file with each
+person's first name (no spaces in the file name, and don't forget the
+\texttt{.org} extension!).  Only one person should submit the final file.
+\end{itemize}
+\section{Hints}
+\label{sec:org78456b4}
+
+
+\subsection{Make sure the structure of the grammar can be parsed by the parser.}
+\label{sec:orgf9dddc5}
+
+For example, a recursive descent parser cannot terminate the parse of a
+left-recursive grammar.
+\subsection{Use re-entrancy if you need it.}
+\label{sec:orgc8574ac}
+
+\texttt{NLTK} has some notation for this.
+\section{Questions}
+\label{sec:org4e774d6}
+
+\begin{enumerate}
+\setcounter{enumi}{0}
+\item \label{prod-rules} Remember those silly tags from \href{./hw1.org}{hw1.org}?  Let
+\end{enumerate}
+
+\begin{align}
+N &= \{ \textrm{FOO,BAR,EGO,NEED,ADS,DUCK,MANSE} \} \ \text{and} \nonumber \\
+T &= \{ \w{dog, black, racing, was, squirrel, tree, burrow, ground hog, bushes, towards,
+hunting, back, wee} \}  \nonumber
+\end{align}
+
+For each of the following production rules, state from which class of
+language they come and \emph{show why} by derivation from the language
+definitions (that is, write the proof and describe it).
+\begin{description}
+\item[{rule 1}] \(\txtgrmr{FOO}{EGO \ NEED \ DUCK}\)
+\begin{description}
+\item[{ANSWER}] This is a production of a Context Free Language.
+\begin{itemize}
+\item This is because the rule can be rewritten as \(A \rightarrow BCD\) where \(B,C,D \in N\)
+\item \(BCD \in w\) given that \(w \in \{N,T\}^*\)
+\end{itemize}
+\end{description}
+\item[{rule 2}] \(\txtgrmr{FOO \ DUCK}{EGO \ NEED \ DUCK}\)
+\begin{description}
+\item[{ANSWER}] This is a Context Sensitive Language production!
+\begin{itemize}
+\item This is because this production is of the form \(u_1 A u_2 \rightarrow u_1 w u_2\)
+\item \(\epsilon = u_1, FOO = A, DUCK = u_2, EGO\ NEED = w\)
+\item The following holds true: \(u_1, u_2, w \in (N \cup T)^*, A \in N, w \neq \epsilon\)
+\end{itemize}
+\end{description}
+\end{description}
+
+
+\begin{description}
+\item[{rule 3}] \(\txtgrmr{FOO}{EGO \ \w{dog} \ DUCK}\)
+\begin{description}
+\item[{ANSWER}] This is a production of a Context Free Language.
+\begin{itemize}
+\item This is because the rule can be rewritten as \(A \rightarrow BCD\) where \(B,D \in N\) and \(C \in T\)
+\item \(BCD \in w\) given that \(w \in \{N,T\}^*\)
+\end{itemize}
+\end{description}
+\item[{rule 4}] \(\txtgrmr{FOO \ \w{ground hog}}{EGO \ \w{dog} \ DUCK \ \w{squirrel}}\)
+\begin{description}
+\item[{ANSWER}] 
+\end{description}
+\item[{rule 5}] \(\txtgrmr{FOO}{\w{black} \ \w{dog} \ DUCK}\)
+\begin{description}
+\item[{ANSWER}] This is a Regular Language!
+\begin{itemize}
+\item This is because the rule can be redescribed as \(A \rightarrow XY\) where \(X \in T^*\) and \(Y \in N\)
+\end{itemize}
+\end{description}
+\end{description}
+
+Each of the rules is abstracted from a different grammar!
+
+
+
+\begin{enumerate}
+\setcounter{enumi}{1}
+\item \label{which-recursn} Consider the following grammar.
+\end{enumerate}
+\begin{verbatim}
+N = {A,B,C,D}
+T = {foo,bar}
+S = {C}
+P = {C -> A B
+     B -> A D
+     B -> A
+     D -> A A
+     A -> T
+     }
+\end{verbatim}
+Is the grammar left-, right-, neither-, or both-recursive?  Why?
+
+\begin{enumerate}
+\setcounter{enumi}{2}
+\item \label{manual-parse} By hand, generate a construct for each unique
+length of output using the grammar of question \ref{which-recursn} and show
+them and their derivation as an \texttt{org} table:
+\end{enumerate}
+
+\begin{center}
+\begin{tabular}{ll}
+sentence & rule sequence and comments\\
+\hline
+\(foobar\) & \(S \rightarrow C \rightarrow AB \rightarrow AA \rightarrow AT \rightarrow TT \rightarrow "foo"T \rightarrow "foo"\ "bar"\)\\
+\(foofoofoofoo\) & \(S \rightarrow C \rightarrow AB \rightarrow TB \rightarrow "foo"B \rightarrow "foo"AD \rightarrow "foo"TD \rightarrow\)\\
+ & \("foo""foo"D \rightarrow "foo""foo"AA \rightarrow "foo""foo"TA \rightarrow\)\\
+ & \("foo""foo""foo"A \rightarrow "foo""foo""foo"T \rightarrow "foo""foo""foo""foo"\)\\
+\end{tabular}
+\end{center}
+
+
+\begin{enumerate}
+\setcounter{enumi}{3}
+\item \label{regex} For the terminals in question \ref{prod-rules}, write the
+minimum number of Python \textbf{regular expressions} (\emph{not production rules
+from context-free or greater grammars!}) to distinguish among them \emph{when
+the entire group of words is presented} (not one-by-one!).  Do not use
+trivial regexes that match one and only one word.  Use conditionals and
+order the regexs into a tree until all terminals are recognized without
+ambiguities.  Carry your tree out until each terminal has a regular
+expression that places it in the leaves.  Include a sketch of your tree
+if you think it will help!
+
+\setcounter{enumi}{4}
+\item \label{regex-imp} Now implement your regular expression tree in
+question \ref{regex} and show the code and results.
+\end{enumerate}
+
+
+
+\begin{enumerate}
+\setcounter{enumi}{5}
+\item \label{first-gram} Write a grammar that captures the following sentences:
+\end{enumerate}
+
+\begin{description}
+\item[{sentence 1}] ``The cheerful black dog slept quietly by the chair.''
+\item[{sentence 2}] ``A sleepy yellow dog stretched his back.''
+\item[{sentence 3}] ``Somebody downstairs made the coffee.''
+\item[{ANSWER}] Productions Below
+\begin{itemize}
+\item \(S \rightarrow NP\ VP\)
+\item \(NP \rightarrow Det\ ADJP\ Noun\)
+\item \(NP \rightarrow Det\ Noun\)
+\item \(NP \rightarrow Noun\ Adj\)
+\item \(ADJP \rightarrow Adj\ ADJP \|\ Adj\)
+\item \(VP \rightarrow Verb\ Adv\ PP\)
+\item \(VP \rightarrow Verb\ NP\)
+\item \(PP \rightarrow Prep\ NP\)
+\item \(Det \rightarrow "the" \| "a" \| "his"\)
+\item \(Noun \rightarrow "dog" \| "chair" \| "back" \| "somebody" \| "coffee"\)
+\item \(Adj \rightarrow "cheerful" \| "black" \| "sleepy" \| "yellow" \| "downstairs"\)
+\item \(Verb \rightarrow "slept" \| "stretched" \| "made"\)
+\item \(Prep \rightarrow "by"\)
+\item \(Adv \rightarrow "quietly"\)
+\end{itemize}
+\end{description}
+
+Put the phrases generated by each rule from these sentences alongside the
+rules, again as an \texttt{org} table (this example is \textbf{JUST to illustrate format,
+it is not correct!}):
+
+\begin{center}
+\begin{tabular}{ll}
+rule & phrase\\
+\hline
+S \(\rightarrow\) NP VP & (The cheerful black dog slept quietly by the chair)\\
+S \(\rightarrow\) NP VP & (A sleepy yellow dog stretched his back)\\
+S \(\rightarrow\) NP VP & (Somebody downstairs made the coffee)\\
+NP \(\rightarrow\) Det ADJP Noun & (The cheerful black dog)\\
+NP \(\rightarrow\) Det ADJP Noun & (A sleepy yellow dog)\\
+NP \(\rightarrow\) Det Noun & (the coffee)\\
+NP \(\rightarrow\) Det Noun & (his back)\\
+NP \(\rightarrow\) Noun Adj & (Somebody downstairs)\\
+ADJP \(\rightarrow\) Adj ADJP & (sleepy yellow)\\
+ADJP \(\rightarrow\) Adj ADJP & (cheerful  black)\\
+ADJP \(\rightarrow\) Adj & (downstairs)\\
+ADJP \(\rightarrow\) Adj & (sleepy)\\
+ADJP \(\rightarrow\) Adj & (yellow)\\
+ADJP \(\rightarrow\) Adj & (cheerful)\\
+ADJP \(\rightarrow\) Adj & (black)\\
+VP \(\rightarrow\) Verb Adv PP & (slept quietly by the chair)\\
+VP \(\rightarrow\) Verb NP & (stretched his back)\\
+VP \(\rightarrow\) Verb NP & (made the coffee)\\
+PP \(\rightarrow\) Prop NP & (by the chair)\\
+\end{tabular}
+\end{center}
+
+
+\begin{enumerate}
+\setcounter{enumi}{6}
+\item \label{recur-desc-parser} Now implement the grammar of question
+\ref{first-gram} as a recursive descent parser.  Parse each sentence, showing
+the results as a prettily printed tree, and compare them.  What do you
+observe?
+
+\item \label{chart-parser} Following on, implement the grammar of question
+\ref{first-gram} as a chart parser.  Parse each sentence, showing the results,
+and compare these chart parsing results to your results in question
+\ref{recur-desc-parser}.  What do you observe?
+
+\item \label{clock} Extend your grammar for the sentences in question
+\ref{recur-desc-parser}  so that it can parse sentences 4--6 below.  Time the
+implementation's performance for each sentence, doing this 1000 times
+for each sentence for better estimates, and put the results  in an \texttt{org} table.
+\begin{description}
+\item[{sentence 4}] ``We had a long walk to the park and Vinny played with
+three other dogs.''
+\item[{sentence 5}] ``It was sunny today but might not be tomorrow.''
+\item[{sentence 6}] ``There are 49 angels dancing on the head of this pin.''
+\end{description}
+
+\item \label{avm-graph} Consider this attribute-value matrix:
+\end{enumerate}
+
+\begin{center}
+\avm{
+[ CAT  & s \\
+  HEAD & [ AGR   & \1 [ NUM & sg \\
+                        PER & 3 ] \\
+           SUBJ  & [ AGR \1 ] ] ] \\
+}.
+\end{center}
+
+Draw the corresponding directed acyclic graph, ideally in Python.  (A hand-drawn figure is fine:
+just photograph it and include the image below, as is done in \href{../notes.org}{notes.org}.)
+
+\begin{enumerate}
+\setcounter{enumi}{10}
+\item \label{basic-fea-struc} Now extend your grammar from question \ref{clock} to include features
+relevant to subject-verb agreement, using \texttt{nltk.FeatStruct()} from
+chapter nine, so that you can parse sentences 1--9.  Using
+\texttt{cp.parse()}, print and study the parse trees for each sentence.  Do
+you agree with them?  Why or why not?
+
+\begin{description}
+\item[{sentence 7}] ``The black dogs are playing with the elf toy.''
+\item[{sentence 8}] ``The yellow dog slept in my pajamas.''
+\item[{sentence 9}] ``We will take two long rides in the country next week.''
+\end{description}
+
+\setcounter{enumi}{11}
+\item \label{fopc} \href{../../reading/blk\_2nd\_ed.pdf}{Chapter 10 of BLK} and \href{http://www.nltk.org/howto/semantics.html}{the semantics howto} march one through the basics
+of applying the FOPC and the \(\lambda\) calculus to reifying the semantics of
+context-free sentences.  One of the practical difficulties in this
+approach is ensuring that the implementation of the universe of
+discourse (they call it the \emph{domain of discourse}, same thing) actually
+covers the intended universe.
+
+To see this, let's use their \texttt{sem2.fcfg} grammar to parse the following
+sentences syntactically and semantically, and output the reification of
+the sentences into the FOPC and the \(\lambda\) calculus.  
+
+(HINT: be sure to 
+\begin{verbatim}
+   from nltk.sem import *
+\end{verbatim}
+so you get all the parts and save yourself frustration!)  
+
+For each of the following sentences, parse them and print the sentence,
+its parse, and its semantics; and then explain the results you get and
+exactly how you would fix the problems encountered.
+
+\begin{itemize}
+\item Suzie sees Noosa.
+\item Fido barks.
+\item Tess barks.
+\end{itemize}
+\end{enumerate}
+\section{Grading Scale}
+\label{sec:org31ff97e}
+
+This homework is worth 15 points.  The grading
+scale is:
+
+\begin{center}
+\begin{tabular}{lr}
+fraction correctly reviewed and answered & points awarded\\
+\hline
+\(\ge 0.95\) & 15\\
+0.90 -- 0.94 & 14\\
+0.85 -- 0.89 & 13\\
+0.80 -- 0.94 & 12\\
+0.75 -- 0.79 & 11\\
+0.70 -- 0.74 & 10\\
+0.65 -- 0.69 & 9\\
+0.60 -- 0.64 & 8\\
+0.55 -- 0.59 & 7\\
+0.50 -- 0.54 & 6\\
+0.45 -- 0.49 & 5\\
+0.40 -- 0.44 & 4\\
+0.35 -- 0.39 & 3\\
+0.30 -- 0.34 & 2\\
+0.25 -- 0.29 & 1\\
+\(< 0.25\) & 0\\
+\end{tabular}
+\end{center}
+\section{Scoring}
+\label{sec:org2f18251}
+
+
+\begin{center}
+\begin{tabular}{rrl}
+question & max pts & answer ok?\\
+\hline
+1 & 1 & \\
+2 & 1 & \\
+3 & 1 & \\
+4 & 1 & \\
+5 & 1 & \\
+6 & 2 & \\
+7 & 1 & \\
+8 & 1 & \\
+9 & 1 & \\
+10 & 1 & \\
+11 & 2 & \\
+12 & 2 & \\
+\hline
+total score & 15 & 0\\
+percentage &  & 0\\
+total points &  & \\
+\end{tabular}
+\end{center}
+\end{document}
