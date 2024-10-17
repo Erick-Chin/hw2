@@ -269,6 +269,77 @@ it is not correct!*):
    the results as a prettily printed tree, and compare them.  What do you
    observe?
 
+#+begin_src python :results output
+import nltk
+
+grammar = nltk.CFG.fromstring("""
+    S -> NP VP
+    NP -> Det ADJP Noun | Det Noun | Noun Adj
+    ADJP -> Adj ADJP | Adj
+    VP -> Verb Adv PP | Verb NP
+    PP -> Prep NP
+    Det -> 'the' | 'a' | 'his'
+    Noun -> 'dog' | 'chair' | 'back' | 'somebody' | 'coffee'
+    Adj -> 'cheerful' | 'black' | 'sleepy' | 'yellow' | 'downstairs'
+    Verb -> 'slept' | 'stretched' | 'made'
+    Prep -> 'by'
+    Adv -> 'quietly'
+""")
+
+rd_parser = nltk.RecursiveDescentParser(grammar)
+
+sentences = [
+    "The cheerful black dog slept quietly by the chair.",
+    "A sleepy yellow dog stretched his back.",
+    "Somebody downstairs made the coffee."
+]
+
+for sent in sentences:
+    for tree in rd_parser.parse(sent.lower().replace(".", "").split()):
+        tree.pretty_print()
+#+end_src
+
+#+RESULTS:
+#+begin_example
+                               S                             
+        _______________________|____________                  
+       NP                                   VP               
+  _____|_________________       ____________|____             
+ |           ADJP        |     |      |          PP          
+ |      ______|_____     |     |      |      ____|___         
+ |     |           ADJP  |     |      |     |        NP      
+ |     |            |    |     |      |     |     ___|____    
+Det   Adj          Adj  Noun  Verb   Adv   Prep Det      Noun
+ |     |            |    |     |      |     |    |        |   
+the cheerful      black dog  slept quietly  by  the     chair
+
+                        S                         
+       _________________|______________            
+      NP                               |          
+  ____|_________________               |           
+ |         ADJP         |              VP         
+ |     _____|_____      |        ______|___        
+ |    |          ADJP   |       |          NP     
+ |    |           |     |       |       ___|___    
+Det  Adj         Adj   Noun    Verb   Det     Noun
+ |    |           |     |       |      |       |   
+ a  sleepy      yellow dog  stretched his     back
+
+                         S                 
+           ______________|____              
+          |                   VP           
+          |               ____|___          
+          NP             |        NP       
+    ______|______        |     ___|____     
+  Noun          Adj     Verb Det      Noun 
+   |             |       |    |        |    
+somebody     downstairs made the     coffee
+
+#+end_example
+
+The more complex the sentence is, the more complex the tree is.
+Like the first sentence, it has adj, adv, and prep, the tree is more complex.
+
 8. <<chart-parser>> Following on, implement the grammar of question
    [[first-gram]] as a chart parser.  Parse each sentence, showing the results,
    and compare these chart parsing results to your results in question
