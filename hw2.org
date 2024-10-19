@@ -363,23 +363,24 @@ Like the first sentence, it has adj, adv, and prep, the tree is more complex.
 
 
 #+begin_src python :results output
-
 import nltk
 
 grammar = nltk.CFG.fromstring("""
     S -> NP VP
     S -> NP VP Con NP VP
+    S -> NP VP Con VP
     NP -> Det ADJP Noun | Det Noun | Noun Adj | Noun | Det Adj Noun PP | ADJP Noun
     ADJP -> Adj ADJP | Adj
-    VP -> Verb Adv PP | Verb NP | Verb PP
+    VP -> Verb Adv PP | Verb NP | Verb PP | Verb Adj Adv | Mod Adv Verb Adv
     PP -> Prep NP
     Det -> 'the' | 'a' | 'his'
-    Con -> 'and'
-    Noun -> 'dog' | 'chair' | 'back' | 'somebody' | 'coffee' | 'we' | 'walk' | 'park' | 'vinny' | 'dogs'
-    Adj -> 'cheerful' | 'black' | 'sleepy' | 'yellow' | 'downstairs' | 'three' | 'other' | 'long'
-    Verb -> 'slept' | 'stretched' | 'made' | 'had' | 'played'
+    Con -> 'and' | 'but'
+    Noun -> 'dog' | 'chair' | 'back' | 'somebody' | 'coffee' | 'we' | 'walk' | 'park' | 'vinny' | 'dogs' | 'it'
+    Adj -> 'cheerful' | 'black' | 'sleepy' | 'yellow' | 'downstairs' | 'three' | 'other' | 'long' | 'sunny'
+    Mod -> 'might'
+    Verb -> 'slept' | 'stretched' | 'made' | 'had' | 'played' | 'was' | 'be'
     Prep -> 'by' | 'to' | 'with'
-    Adv -> 'quietly'
+    Adv -> 'quietly' | 'today' | 'not' | 'tomorrow'
 """)
 
 rd_parser = nltk.RecursiveDescentParser(grammar)
@@ -388,11 +389,16 @@ sentences = [
     "The cheerful black dog slept quietly by the chair.",
     "A sleepy yellow dog stretched his back.",
     "Somebody downstairs made the coffee.",
-    "We had a long walk to the park and Vinny played with three other dogs."
+    "We had a long walk to the park and Vinny played with three other dogs.",
+    "It was sunny today but might not be tomorrow."
 ]
 
 for sent in sentences:
-    trees = rd_parser.parse(sent.lower().replace(".", "").split())
+    better_sent = sent.lower().replace(".", "").split()
+    trees_generator = rd_parser.parse(better_sent)
+    trees = list(trees_generator)
+    if len(trees) == 0:
+        print(f"No tree for sentence {sent}")
     for tree in trees:
         tree.pretty_print()
 #+end_src
@@ -448,6 +454,14 @@ somebody     downstairs made the     coffee
 Noun Verb Det Adj  Noun Prep Det     Noun Con  Noun  Verb  Prep  Adj        Adj  Noun
  |    |    |   |    |    |    |       |    |    |     |     |     |          |    |
  we  had   a  long walk  to  the     park and vinny played with three      other dogs
+
+                       S
+  _____________________|_________
+ NP         VP         |         VP
+ |     _____|_____     |     ____|__________
+Noun Verb  Adj   Adv  Con  Mod  Adv Verb   Adv
+ |    |     |     |    |    |    |   |      |
+ it  was  sunny today but might not  be  tomorrow
 
 #+end_example
 
