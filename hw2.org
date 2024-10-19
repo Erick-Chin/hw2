@@ -408,6 +408,45 @@ Like the first sentence, it has adj, adv, and prep, the tree is more complex.
 Draw the corresponding directed acyclic graph, ideally in Python.  (A hand-drawn figure is fine:
 just photograph it and include the image below, as is done in [[file:../notes.org][notes.org]].)
 
+#+begin_src python :results output
+import matplotlib.pyplot as plt
+import networkx as nx
+
+G = nx.DiGraph()
+G.add_node(" ")
+G.add_node("CAT: s")
+G.add_node("HEAD")
+G.add_node("AGR: 1")
+G.add_node("NUM: sg")
+G.add_node("PER: 3")
+G.add_node("SUBJ")
+
+G.add_edges_from([
+    (" ", "CAT: s"),
+    (" ", "HEAD"),
+    ("HEAD", "AGR: 1"),
+    ("AGR: 1", "NUM: sg"),
+    ("AGR: 1", "PER: 3"),
+    ("HEAD", "SUBJ"),
+    ("SUBJ", "AGR: 1")
+])
+
+pos = {
+    " ": (0, 0),
+    "CAT: s": (1, 1),
+    "HEAD": (1, 0),
+    "AGR: 1": (2, 1),
+    "NUM: sg": (3, 1),
+    "PER: 3": (3, 0),
+    "SUBJ": (2, 0)
+}
+
+nx.draw(G, pos, with_labels=True, node_size=3000, font_size=14)
+plt.show()
+#+end_src
+
+#+RESULTS:
+
 11. [@11] <<basic-fea-struc>> Now extend your grammar from question [[clock]] to include features
     relevant to subject-verb agreement, using =nltk.FeatStruct()= from
     chapter nine, so that you can parse sentences 1--9.  Using
