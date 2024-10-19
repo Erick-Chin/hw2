@@ -180,6 +180,12 @@ P = {C -> A B
 #+END_EXAMPLE
 Is the grammar left-, right-, neither-, or both-recursive?  Why?
 
++ ANSWER :: The grammar is **neither left-recursive nor right-recursive**.
+  - **Neither**:
+    -A grammar is left-recursive if a non-terminal refers to itself on the left side.
+     A grammar is right-recursive if a non-terminal refers to itself on the right side.
+     None of the non-terminals in this grammar refer to themselves on the left or right side
+
 3. [@3] <<manual-parse>> By hand, generate a construct for each unique
    length of output using the grammar of question [[which-recursn]] and show
    them and their derivation as an =org= table:
