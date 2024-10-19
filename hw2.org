@@ -156,7 +156,8 @@ definitions (that is, write the proof and describe it).
        + This is because the rule can be rewritten as $A \rightarrow BCD$ where $B,D \in N$ and $C \in T$
        + $BCD \in w$ given that $w \in \{N,T\}^*$
    + rule 4 :: $\txtgrmr{FOO \ \w{ground hog}}{EGO \ \w{dog} \ DUCK \ \w{squirrel}}$
-     + ANSWER ::
+     + ANSWER :: This is a type ∅ language.
+       + None of the rules of regular, context-free, nor context-sensitive can represent it.
    + rule 5 :: $\txtgrmr{FOO}{\w{black} \ \w{dog} \ DUCK}$
      + ANSWER :: This is a Regular Language!
        + This is because the rule can be redescribed as $A \rightarrow XY$ where $X \in T^*$ and $Y \in N$
@@ -211,6 +212,37 @@ Is the grammar left-, right-, neither-, or both-recursive?  Why?
    ambiguities.  Carry your tree out until each terminal has a regular
    expression that places it in the leaves.  Include a sketch of your tree
    if you think it will help!
+
+#+begin_src python :results output
+import nltk
+
+sentence = "The black dog was racing towards the tree, hunting a squirrel in a wee groundhog's burrow back in the bushes."
+text = nltk.word_tokenize(sentence)
+tagged_token = nltk.pos_tag(text)
+
+grammar = r"""
+  NP: {<DT>?<JJ>*(<NN.*><POS>)?<NN.*>}
+  PP: {<IN><NP>}
+  VP: {<VBD>?<VBG>(<RB>?<NP|PP>)*}
+"""
+cp = nltk.RegexpParser(grammar)
+print(cp.parse(tagged_token))
+#+end_src
+
+#+RESULTS:
+#+begin_example
+(S
+  (NP The/DT black/JJ dog/NN)
+  (VP was/VBD racing/VBG (PP towards/IN (NP the/DT tree/NN)))
+  ,/,
+  (VP
+    hunting/VBG
+    (NP a/DT squirrel/NN)
+    (PP in/IN (NP a/DT wee/JJ groundhog/NN 's/POS burrow/NN))
+    back/RB
+    (PP in/IN (NP the/DT bushes/NNS)))
+  ./.)
+#+end_example
 
 5. [@5] <<regex-imp>> Now implement your regular expression tree in
    question [[regex]] and show the code and results.
