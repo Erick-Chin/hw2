@@ -546,12 +546,6 @@ plt.show()
    sentences syntactically and semantically, and output the reification of
    the sentences into the FOPC and the \lambda calculus.
 
-   (HINT: be sure to
-   ,#+begin_src python :results output
-   from nltk.sem import *
-   #+end_src
-   so you get all the parts and save yourself frustration!)  
-
    For each of the following sentences, parse them and print the sentence,
    its parse, and its semantics; and then explain the results you get and
    exactly how you would fix the problems encountered.
@@ -560,8 +554,85 @@ plt.show()
       + Fido barks.
       + Tess barks.
 
+#+begin_src python :results output
+import nltk
+from nltk import load_parser
+from nltk.sem import *
+
+nltk.download('book_grammars')
+parser = load_parser('grammars/sample_grammars/sem2.fcfg', trace=0)
+
+sentences = [
+    "Suzie sees Noosa",
+    "Fido barks",
+    "Tess barks"
+]
+
+def print_output(sent, tree):
+    print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+    print(f'Sentence: \n\t{sent}')
+    print(f'Parse Result: \n{tree}')
+    print(f'Semantics Result: \n\t{tree.label()["SEM"]}')
+    print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n")
 
 
+for sent in sentences:
+    try:
+        for tree in parser.parse(sent.split()):
+            print_output(sent, tree)
+    except ValueError as e:
+        print("ERROR MESSAGE:")
+        print(e)
+#+end_src
+
+#+RESULTS:
+#+begin_example
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Sentence:
+	Suzie sees Noosa
+Parse Result:
+(S[SEM=<see(suzie,noosa)>]
+  (NP[-LOC, NUM='sg', SEM=<\P.P(suzie)>]
+    (PropN[-LOC, NUM='sg', SEM=<\P.P(suzie)>] Suzie))
+  (VP[NUM='sg', SEM=<\y.see(y,noosa)>]
+    (TV[NUM='sg', SEM=<\X y.X(\x.see(y,x))>, TNS='pres'] sees)
+    (NP[+LOC, NUM='sg', SEM=<\P.P(noosa)>]
+      (PropN[+LOC, NUM='sg', SEM=<\P.P(noosa)>] Noosa))))
+Semantics Result:
+	see(suzie,noosa)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Sentence:
+	Fido barks
+Parse Result:
+(S[SEM=<bark(fido)>]
+  (NP[-LOC, NUM='sg', SEM=<\P.P(fido)>]
+    (PropN[-LOC, NUM='sg', SEM=<\P.P(fido)>] Fido))
+  (VP[NUM='sg', SEM=<\x.bark(x)>]
+    (IV[NUM='sg', SEM=<\x.bark(x)>, TNS='pres'] barks)))
+Semantics Result:
+	bark(fido)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+ERROR MESSAGE:
+Grammar does not cover some of the input words: "'Tess'".
+#+end_example
+
+/OUTPUT EXPLAINED/:
+The reason for the error message is that in the grammar, "Tess" is not contained as a terminal in the grammar. It should be listed among the proper nouns, but the following is a list of those in the grammar:
+#+begin_src
+PropN[-LOC,NUM=sg,SEM=<\P.P(john)>] -> 'John'
+PropN[-LOC,NUM=sg,SEM=<\P.P(mary)>] -> 'Mary'
+PropN[-LOC,NUM=sg,SEM=<\P.P(suzie)>] -> 'Suzie'
+PropN[-LOC,NUM=sg,SEM=<\P.P(fido)>] -> 'Fido'
+PropN[+LOC, NUM=sg,SEM=<\P.P(noosa)>] -> 'Noosa'
+#+end_src
+
+This could be fixed by adding a line such as this:
+#+begin_src
+PropN[-LOC,NUM=sg,SEM=<\P.P(tess)>] -> 'Tess'
+#+end_src
 
 * Grading Scale
 
