@@ -392,7 +392,85 @@ Like the first sentence, it has adj, adv, and prep, the tree is more complex.
    + sentence 5 :: ``It was sunny today but might not be tomorrow.''
    + sentence 6 :: ``There are 49 angels dancing on the head of this pin.''
 
-10. <<avm-graph>> Consider this attribute-value matrix:
+
+
+#+begin_src python :results output raw
+import nltk
+import time
+
+grammar = nltk.CFG.fromstring("""
+    S -> NP VP | NP VP Con NP VP | NP VP Con VP | 'there' VP PP
+    NP -> Det ADJP Noun | Det Noun | Noun Adj | Noun | Det Adj Noun PP | ADJP Noun | Adj Noun Part | Det Noun PP
+    ADJP -> Adj ADJP | Adj
+    VP -> Verb Adv PP | Verb NP | Verb PP | Verb Adj Adv | Mod Adv Verb Adv
+    PP -> Prep NP
+    Det -> 'the' | 'a' | 'his' | 'this'
+    Con -> 'and' | 'but'
+    Noun -> 'dog' | 'chair' | 'back' | 'somebody' | 'coffee' | 'we' | 'walk' | 'park' | 'vinny' | 'dogs' | 'it' | 'angels' | 'head' | 'pin'
+    Adj -> 'cheerful' | 'black' | 'sleepy' | 'yellow' | 'downstairs' | 'three' | 'other' | 'long' | 'sunny' | '49'
+    Mod -> 'might'
+    Verb -> 'slept' | 'stretched' | 'made' | 'had' | 'played' | 'was' | 'be' | 'are'
+    Part -> 'dancing'
+    Prep -> 'by' | 'to' | 'with' | 'on' | 'of'
+    Adv -> 'quietly' | 'today' | 'not' | 'tomorrow'
+""")
+
+rd_parser = nltk.RecursiveDescentParser(grammar)
+
+sentences = [
+    "The cheerful black dog slept quietly by the chair.",
+    "A sleepy yellow dog stretched his back.",
+    "Somebody downstairs made the coffee.",
+    "We had a long walk to the park and Vinny played with three other dogs.",
+    "It was sunny today but might not be tomorrow.",
+    "There are 49 angels dancing on the head of this pin."
+]
+
+def from_sent_get_trees_generator(sent, index):
+    better_sent = sent.lower().replace(".", "").split()
+    trees_generator = rd_parser.parse(better_sent)
+    return trees_generator
+
+
+def get_parse_time(sent):
+    runs = 100000
+    start_time = time.time()
+    [from_sent_get_trees_generator(sent, i) for i in range(runs)]
+    end_time = time.time()
+    total_time = end_time - start_time
+    average_time = total_time/runs
+    return f"| {sent} | {average_time} |"
+
+thread_array = []
+results = [get_parse_time(sent) for sent in sentences]
+print("| Sentence | Time |")
+print("|---------|------------|")
+[print(result) for result in results]
+#+end_src
+
+#+RESULTS:
+| Sentence                                                               |                  Time |
+|------------------------------------------------------------------------+-----------------------|
+| The cheerful black dog slept quietly by the chair.                     | 4.959135055541992e-06 |
+| A sleepy yellow dog stretched his back.                                | 5.037796497344971e-06 |
+| Somebody downstairs made the coffee.                                   | 4.305291175842285e-06 |
+| We had a long walk to the park and Vinny played with three other dogs. | 5.863513946533203e-06 |
+| It was sunny today but might not be tomorrow.                          | 5.145440101623535e-06 |
+| There are 49 angels dancing on the head of this pin.                   | 5.278613567352295e-06 |
+
+#+CAPTION: Table of Answers for Question 9
+| Sentence                                                               |     Time |
+|------------------------------------------------------------------------+----------|
+| The cheerful black dog slept quietly by the chair.                     | 4.91e-06 |
+| A sleepy yellow dog stretched his back.                                | 5.04e-06 |
+| Somebody downstairs made the coffee.                                   | 4.32e-06 |
+| We had a long walk to the park and Vinny played with three other dogs. | 5.82e-06 |
+| It was sunny today but might not be tomorrow.                          |  5.1e-06 |
+| There are 49 angels dancing on the head of this pin.                   | 5.24e-06 |
++ DISCLAIMER 1: :: The above table's time column rounds in a way the code when evaluate will not round. This is because how long the parsing takes is system dependent. The output from above is unrounded so that 0.0 won't potentially show in results
++ DISCLAIMER 2: :: My results for how long the evalutaion took was too variable for 1000 runs, so I decided to kick it up to 100000 even though the directions suggest 1000. If I wanted to do 1000, I would simply change the "runs" variable to 1000
+
+10. [@10] <<avm-graph>> Consider this attribute-value matrix:
 #
 #+begin_export latex
 \begin{center}
@@ -466,10 +544,10 @@ plt.show()
 
    To see this, let's use their =sem2.fcfg= grammar to parse the following
    sentences syntactically and semantically, and output the reification of
-   the sentences into the FOPC and the \lambda calculus.  
+   the sentences into the FOPC and the \lambda calculus.
 
-   (HINT: be sure to 
-   #+begin_src python :results output
+   (HINT: be sure to
+   ,#+begin_src python :results output
    from nltk.sem import *
    #+end_src
    so you get all the parts and save yourself frustration!)  
