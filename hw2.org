@@ -687,6 +687,137 @@ plt.show()
    + sentence 8 :: ``The yellow dog slept in my pajamas.''
    + sentence 9 :: ``We will take two long rides in the country next week.''
 
+   + ANSWER :: I extended the grammar to include feature structures for subject-verb agreement by incorporating
+   the NUM (number) feature. This ensures that the subject (noun phrase) and the verb phrase agree
+   in number (singular or plural). Using NLTK’s FeatStruct, I defined the grammar with these features
+   and utilized the FeatureChartParser to parse the given sentences. The resulting parse trees correctly
+   reflect subject-verb agreement, aligning with grammatical rules.
+
+#+BEGIN_SRC python :results output :exports both
+import nltk
+import string
+from nltk.grammar import FeatureGrammar
+from nltk.parse import FeatureChartParser
+grammar = FeatureGrammar.fromstring("""
+S[NUM=?n] -> NP[NUM=?n] VP[NUM=?n]
+
+# Singular Nouns 
+NP[NUM=sg] -> Det ADJP N[NUM=sg]
+NP[NUM=sg] -> Det N[NUM=sg]
+NP[NUM=sg] -> N[NUM=sg] Adj
+NP[NUM=sg] -> Adj N[NUM=sg]
+
+# Plural Nouns 
+NP[NUM=pl] -> Det ADJP N[NUM=pl]
+NP[NUM=pl] -> Det N[NUM=pl]
+NP[NUM=pl] -> N[NUM=pl] Adj
+NP[NUM=pl] -> Pronoun[NUM=pl]
+
+# Adjectives 
+ADJP -> Adj ADJP
+ADJP -> Adj
+
+# Verbs 
+VP[NUM=sg] -> V[NUM=sg] PP
+VP[NUM=sg] -> V[NUM=sg]
+VP[NUM=pl] -> Aux V[NUM=pl] PP
+VP[NUM=pl] -> V[NUM=pl]
+VP[NUM=pl] -> Aux V[NUM=pl]
+
+# Auxiliary Verbs
+Aux -> 'are' | 'will'
+
+# Main Verbs
+V[NUM=sg] -> 'slept'
+V[NUM=pl] -> 'playing' | 'take'
+
+# Prepositional Phrases
+PP -> Prep NP
+
+# Determiners
+Det -> 'the' | 'a' | 'his' | 'my' | 'two'
+
+# Adjectives
+Adj -> 'black' | 'yellow' | 'long' | 'elf' | 'next'
+
+# Nouns
+N[NUM=sg] -> 'dog' | 'toy' | 'pajamas' | 'ride' | 'country' | 'week'
+N[NUM=pl] -> 'dogs' | 'rides'
+
+# Pronouns
+Pronoun[NUM=pl] -> 'we'
+
+# Prepositions
+Prep -> 'with' | 'in'
+""")
+
+parser = FeatureChartParser(grammar)
+
+sentences = [
+    "The black dogs are playing with the elf toy.",
+    "The yellow dog slept in my pajamas.",
+    "We will take two long rides in the country next week."
+]
+
+# remove punctuation from tokens
+def remove_punctuation(tokens):
+    return [word for word in tokens if word not in string.punctuation]
+
+def parse_sentences(parser, sentences):
+    for idx, sent in enumerate(sentences, 7):
+        print(f"\nSentence {idx}: \"{sent}\"")
+        tokens = nltk.word_tokenize(sent.lower())
+        tokens = remove_punctuation(tokens)  # Remove punctuation
+        try:
+            trees = list(parser.parse(tokens))
+            if trees:
+                for tree in trees:
+                    print(tree.pformat())  # Use pformat() instead of pretty_print()
+            else:
+                print("No parse tree found.")
+        except ValueError as e:
+            print(f"Error: {e}")
+
+# display the sentences
+parse_sentences(parser, sentences)
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+
+Sentence 7: "The black dogs are playing with the elf toy."
+(S[NUM='pl']
+  (NP[NUM='pl']
+    (Det[] the)
+    (ADJP[] (Adj[] black))
+    (N[NUM='pl'] dogs))
+  (VP[NUM='pl']
+    (Aux[] are)
+    (V[NUM='pl'] playing)
+    (PP[]
+      (Prep[] with)
+      (NP[NUM='sg']
+        (Det[] the)
+        (ADJP[] (Adj[] elf))
+        (N[NUM='sg'] toy)))))
+
+Sentence 8: "The yellow dog slept in my pajamas."
+(S[NUM='sg']
+  (NP[NUM='sg']
+    (Det[] the)
+    (ADJP[] (Adj[] yellow))
+    (N[NUM='sg'] dog))
+  (VP[NUM='sg']
+    (V[NUM='sg'] slept)
+    (PP[]
+      (Prep[] in)
+      (NP[NUM='sg'] (Det[] my) (N[NUM='sg'] pajamas)))))
+
+Sentence 9: "We will take two long rides in the country next week."
+No parse tree found.
+#+end_example
+
+
 12. [@12] <<fopc>> [[../../reading/blk_2nd_ed.pdf][Chapter 10 of BLK]] and [[http://www.nltk.org/howto/semantics.html][the semantics howto]] march one through the basics
    of applying the FOPC and the \lambda calculus to reifying the semantics of
    context-free sentences.  One of the practical difficulties in this
