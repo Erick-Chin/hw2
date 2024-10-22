@@ -156,7 +156,7 @@ definitions (that is, write the proof and describe it).
        + This is because the rule can be rewritten as $A \rightarrow BCD$ where $B,D \in N$ and $C \in T$
        + $BCD \in w$ given that $w \in \{N,T\}^*$
    + rule 4 :: $\txtgrmr{FOO \ \w{ground hog}}{EGO \ \w{dog} \ DUCK \ \w{squirrel}}$
-     + ANSWER :: This is a type ∅ language.
+     + ANSWER :: This is a type $\emptyset$ language.
        + None of the rules of regular, context-free, nor context-sensitive can represent it.
    + rule 5 :: $\txtgrmr{FOO}{\w{black} \ \w{dog} \ DUCK}$
      + ANSWER :: This is a Regular Language!
@@ -789,6 +789,7 @@ This could be fixed by adding a line such as this:
 #+begin_src
 PropN[-LOC,NUM=sg,SEM=<\P.P(tess)>] -> 'Tess'
 #+end_src
+
 
 * Grading Scale
 
