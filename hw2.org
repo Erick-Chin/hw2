@@ -722,31 +722,34 @@ import nltk
 import string
 from nltk.grammar import FeatureGrammar
 from nltk.parse import FeatureChartParser
+
+# Define the feature-based grammar with subject-verb agreement and extended VP rules
 grammar = FeatureGrammar.fromstring("""
 S[NUM=?n] -> NP[NUM=?n] VP[NUM=?n]
 
-# Singular Nouns 
+# Singular Noun Phrases
 NP[NUM=sg] -> Det ADJP N[NUM=sg]
 NP[NUM=sg] -> Det N[NUM=sg]
 NP[NUM=sg] -> N[NUM=sg] Adj
 NP[NUM=sg] -> Adj N[NUM=sg]
+NP[NUM=sg] -> NP[NUM=sg] ADJP
 
-# Plural Nouns 
+# Plural Noun Phrases
 NP[NUM=pl] -> Det ADJP N[NUM=pl]
 NP[NUM=pl] -> Det N[NUM=pl]
 NP[NUM=pl] -> N[NUM=pl] Adj
 NP[NUM=pl] -> Pronoun[NUM=pl]
 
-# Adjectives 
+# Adjective Phrases
 ADJP -> Adj ADJP
 ADJP -> Adj
 
-# Verbs 
+# Verb Phrases
 VP[NUM=sg] -> V[NUM=sg] PP
 VP[NUM=sg] -> V[NUM=sg]
-VP[NUM=pl] -> Aux V[NUM=pl] PP
-VP[NUM=pl] -> V[NUM=pl]
-VP[NUM=pl] -> Aux V[NUM=pl]
+VP[NUM=pl] -> Aux V[NUM=pl] NP PP
+VP[NUM=pl] -> VP[NUM=pl] PP
+VP[NUM=pl] -> VP[NUM=pl] NP
 
 # Auxiliary Verbs
 Aux -> 'are' | 'will'
@@ -762,7 +765,7 @@ PP -> Prep NP
 Det -> 'the' | 'a' | 'his' | 'my' | 'two'
 
 # Adjectives
-Adj -> 'black' | 'yellow' | 'long' | 'elf' | 'next'
+Adj -> 'black' | 'yellow' | 'long' | 'elf' | 'next' | 'sleepy'
 
 # Nouns
 N[NUM=sg] -> 'dog' | 'toy' | 'pajamas' | 'ride' | 'country' | 'week'
@@ -772,21 +775,24 @@ N[NUM=pl] -> 'dogs' | 'rides'
 Pronoun[NUM=pl] -> 'we'
 
 # Prepositions
-Prep -> 'with' | 'in'
+Prep -> 'with' | 'in' | 'to' | 'on' | 'of'
 """)
 
+# Create the FeatureChartParser
 parser = FeatureChartParser(grammar)
 
+# Define the sentences to parse
 sentences = [
     "The black dogs are playing with the elf toy.",
     "The yellow dog slept in my pajamas.",
     "We will take two long rides in the country next week."
 ]
 
-# remove punctuation from tokens
+# Function to remove punctuation from tokens
 def remove_punctuation(tokens):
     return [word for word in tokens if word not in string.punctuation]
 
+# Function to parse and print trees
 def parse_sentences(parser, sentences):
     for idx, sent in enumerate(sentences, 7):
         print(f"\nSentence {idx}: \"{sent}\"")
@@ -796,13 +802,13 @@ def parse_sentences(parser, sentences):
             trees = list(parser.parse(tokens))
             if trees:
                 for tree in trees:
-                    print(tree.pformat())  # Use pformat() instead of pretty_print()
+                    print(tree.pformat())  # Use pformat() for better readability
             else:
                 print("No parse tree found.")
         except ValueError as e:
             print(f"Error: {e}")
 
-# display the sentences
+# Parse and display the sentences
 parse_sentences(parser, sentences)
 #+END_SRC
 
@@ -810,20 +816,7 @@ parse_sentences(parser, sentences)
 #+begin_example
 
 Sentence 7: "The black dogs are playing with the elf toy."
-(S[NUM='pl']
-  (NP[NUM='pl']
-    (Det[] the)
-    (ADJP[] (Adj[] black))
-    (N[NUM='pl'] dogs))
-  (VP[NUM='pl']
-    (Aux[] are)
-    (V[NUM='pl'] playing)
-    (PP[]
-      (Prep[] with)
-      (NP[NUM='sg']
-        (Det[] the)
-        (ADJP[] (Adj[] elf))
-        (N[NUM='sg'] toy)))))
+No parse tree found.
 
 Sentence 8: "The yellow dog slept in my pajamas."
 (S[NUM='sg']
@@ -838,7 +831,20 @@ Sentence 8: "The yellow dog slept in my pajamas."
       (NP[NUM='sg'] (Det[] my) (N[NUM='sg'] pajamas)))))
 
 Sentence 9: "We will take two long rides in the country next week."
-No parse tree found.
+(S[NUM='pl']
+  (NP[NUM='pl'] (Pronoun[NUM='pl'] we))
+  (VP[NUM='pl']
+    (VP[NUM='pl']
+      (Aux[] will)
+      (V[NUM='pl'] take)
+      (NP[NUM='pl']
+        (Det[] two)
+        (ADJP[] (Adj[] long))
+        (N[NUM='pl'] rides))
+      (PP[]
+        (Prep[] in)
+        (NP[NUM='sg'] (Det[] the) (N[NUM='sg'] country))))
+    (NP[NUM='sg'] (Adj[] next) (N[NUM='sg'] week))))
 #+end_example
 
 
