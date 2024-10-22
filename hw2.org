@@ -364,6 +364,7 @@ rules, again as an =org= table #
 
 #+begin_src python :results output
 import nltk
+import string
 
 grammar = nltk.CFG.fromstring("""
     S -> NP VP
@@ -387,45 +388,68 @@ sentences = [
     "Somebody downstairs made the coffee."
 ]
 
-for sent in sentences:
-    for tree in rd_parser.parse(sent.lower().replace(".", "").split()):
-        tree.pretty_print()
+
+def remove_punctuation(tokens):
+    return [word for word in tokens if word not in string.punctuation]
+
+# parse and print trees
+def parse_sentences(parser, sentences):
+    for idx, sent in enumerate(sentences, 1):
+        print(f"\nSentence {idx}: \"{sent}\"")
+        tokens = nltk.word_tokenize(sent.lower())
+        tokens = remove_punctuation(tokens)  #remove punctuation
+        trees = list(parser.parse(tokens))
+        if trees:
+            for tree in trees:
+                tree.pretty_print()
+        else:
+            print("No parse tree found.")
+
+#parse and display the sentences
+parse_sentences(rd_parser, sentences)
+
 #+end_src
 
 #+RESULTS:
 #+begin_example
-                               S                             
-        _______________________|____________                  
-       NP                                   VP               
-  _____|_________________       ____________|____             
- |           ADJP        |     |      |          PP          
- |      ______|_____     |     |      |      ____|___         
- |     |           ADJP  |     |      |     |        NP      
- |     |            |    |     |      |     |     ___|____    
+
+Sentence 1: "The cheerful black dog slept quietly by the chair."
+                               S
+        _______________________|____________
+       NP                                   VP
+  _____|_________________       ____________|____
+ |           ADJP        |     |      |          PP
+ |      ______|_____     |     |      |      ____|___
+ |     |           ADJP  |     |      |     |        NP
+ |     |            |    |     |      |     |     ___|____
 Det   Adj          Adj  Noun  Verb   Adv   Prep Det      Noun
- |     |            |    |     |      |     |    |        |   
+ |     |            |    |     |      |     |    |        |
 the cheerful      black dog  slept quietly  by  the     chair
 
-                        S                         
-       _________________|______________            
-      NP                               |          
-  ____|_________________               |           
- |         ADJP         |              VP         
- |     _____|_____      |        ______|___        
- |    |          ADJP   |       |          NP     
- |    |           |     |       |       ___|___    
+
+Sentence 2: "A sleepy yellow dog stretched his back."
+                        S
+       _________________|______________
+      NP                               |
+  ____|_________________               |
+ |         ADJP         |              VP
+ |     _____|_____      |        ______|___
+ |    |          ADJP   |       |          NP
+ |    |           |     |       |       ___|___
 Det  Adj         Adj   Noun    Verb   Det     Noun
- |    |           |     |       |      |       |   
+ |    |           |     |       |      |       |
  a  sleepy      yellow dog  stretched his     back
 
-                         S                 
-           ______________|____              
-          |                   VP           
-          |               ____|___          
-          NP             |        NP       
-    ______|______        |     ___|____     
-  Noun          Adj     Verb Det      Noun 
-   |             |       |    |        |    
+
+Sentence 3: "Somebody downstairs made the coffee."
+                         S
+           ______________|____
+          |                   VP
+          |               ____|___
+          NP             |        NP
+    ______|______        |     ___|____
+  Noun          Adj     Verb Det      Noun
+   |             |       |    |        |
 somebody     downstairs made the     coffee
 
 #+end_example
