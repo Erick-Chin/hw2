@@ -748,6 +748,7 @@ ADJP -> Adj
 VP[NUM=sg] -> V[NUM=sg] PP
 VP[NUM=sg] -> V[NUM=sg]
 VP[NUM=pl] -> Aux V[NUM=pl] NP PP
+VP[NUM=pl] -> Aux V[NUM=pl] PP
 VP[NUM=pl] -> VP[NUM=pl] PP
 VP[NUM=pl] -> VP[NUM=pl] NP
 
@@ -816,7 +817,20 @@ parse_sentences(parser, sentences)
 #+begin_example
 
 Sentence 7: "The black dogs are playing with the elf toy."
-No parse tree found.
+(S[NUM='pl']
+  (NP[NUM='pl']
+    (Det[] the)
+    (ADJP[] (Adj[] black))
+    (N[NUM='pl'] dogs))
+  (VP[NUM='pl']
+    (Aux[] are)
+    (V[NUM='pl'] playing)
+    (PP[]
+      (Prep[] with)
+      (NP[NUM='sg']
+        (Det[] the)
+        (ADJP[] (Adj[] elf))
+        (N[NUM='sg'] toy)))))
 
 Sentence 8: "The yellow dog slept in my pajamas."
 (S[NUM='sg']
@@ -846,7 +860,6 @@ Sentence 9: "We will take two long rides in the country next week."
         (NP[NUM='sg'] (Det[] the) (N[NUM='sg'] country))))
     (NP[NUM='sg'] (Adj[] next) (N[NUM='sg'] week))))
 #+end_example
-
 
 12. [@12] <<fopc>> [[../../reading/blk_2nd_ed.pdf][Chapter 10 of BLK]] and [[http://www.nltk.org/howto/semantics.html][the semantics howto]] march one through the basics
    of applying the FOPC and the \lambda calculus to reifying the semantics of
