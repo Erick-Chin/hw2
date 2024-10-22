@@ -247,6 +247,65 @@ print(cp.parse(tagged_token))
 5. [@5] <<regex-imp>> Now implement your regular expression tree in
    question [[regex]] and show the code and results.
 
++ ANSWER :: I implemented the regular expression tree to categorize each terminal into its
+   respective grammatical class: Adjectives, Nouns, Verbs, and Prepositions/Adverbs.
+   Using Python’s re module, I defined regex patterns for each category and applied them to the list of terminals.
+   This approach efficiently matches each word to its correct category without requiring individual
+   regex patterns for every word, ensuring scalability and clarity.
+   
+
+#+BEGIN_SRC python :results output :exports both
+import re
+
+# Terminals in the corpus
+terminals = [
+    'black', 'dog', 'was', 'racing', 'towards', 'tree', 
+    'hunting', 'squirrel', 'wee', 'groundhog', 'burrow', 'back', 'bush'
+]
+
+# Define regex patterns for different categories
+# Using word boundaries (\b) to ensure exact matches
+adjective_regex = re.compile(r'\b(black|wee)\b', re.IGNORECASE)
+noun_regex = re.compile(r'\b(dog|tree|squirrel|groundhog|burrow|bush)\b', re.IGNORECASE)
+verb_regex = re.compile(r'\b(was|racing|hunting)\b', re.IGNORECASE)
+prep_adv_regex = re.compile(r'\b(towards|back)\b', re.IGNORECASE)
+
+# Function to categorize terminals
+def categorize_terminal(word):
+    if adjective_regex.match(word):
+        return "Adjective"
+    elif noun_regex.match(word):
+        return "Noun"
+    elif verb_regex.match(word):
+        return "Verb"
+    elif prep_adv_regex.match(word):
+        return "Preposition/Adverb"
+    else:
+        return "Uncategorized"
+
+# Apply regex and match each terminal
+for terminal in terminals:
+    category = categorize_terminal(terminal)
+    print(f"{terminal}: Matched {category}")
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+black: Matched Adjective
+dog: Matched Noun
+was: Matched Verb
+racing: Matched Verb
+towards: Matched Preposition/Adverb
+tree: Matched Noun
+hunting: Matched Verb
+squirrel: Matched Noun
+wee: Matched Adjective
+groundhog: Matched Noun
+burrow: Matched Noun
+back: Matched Preposition/Adverb
+bush: Matched Noun
+#+end_example
+
 
 
 6.  [@6] <<first-gram>> Write a grammar that captures the following sentences:
